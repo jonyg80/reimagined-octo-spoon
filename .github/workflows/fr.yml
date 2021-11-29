@@ -1,0 +1,77 @@
+# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: FR CI
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 1,9,17 * * *"
+
+concurrency:
+  group: fr
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: "npm"
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+
+      - name: install youtube-dl
+        run: |
+          sudo curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
+          sudo chmod a+rx /usr/local/bin/youtube-dl
+
+      - run: |
+          sudo apt update 
+          sudo apt install aria2 ffmpeg wireguard python
+          sudo npm i -g @web3-storage/w3
+
+      - name: install ipfs
+        run: |
+          wget https://dist.ipfs.io/go-ipfs/v0.9.1/go-ipfs_v0.9.1_linux-amd64.tar.gz
+          tar -xvzf go-ipfs_v0.9.1_linux-amd64.tar.gz
+          cd go-ipfs
+          sudo bash install.sh
+          ipfs --version
+          ipfs init
+
+      - run: git clone https://github.com/jonyg80/fr-num.git
+
+      - run: |
+          cd fr-num
+          for ((START = $(cat num.txt) ; START <= 1000 ;)); do 
+            START=$(($START+1))
+            echo "**#* START = ${START}  *#**"
+            mkdir vid
+            cd vid
+            youtube-dl -i --playlist-items=${START} --write-thumbnail --external-downloader=aria2c -f '[height=1080]/bestvideo+bestaudio/best' -- "${{ secrets.FR_URL }}"
+            
+            cd ..
+            CID=$(ipfs add --cid-version 1 --quieter --trickle --recursive ./vid)
+            echo "CID = ${CID}"
+            ipfs dag export --progress=false -- ${CID} > vid.car
+            w3 put-car ./vid.car --token ${{ secrets.WEB3_TOKEN }}
+            
+            echo $START > num.txt
+            git config user.name "jonyg80"
+            git config user.email "${{ secrets.GIT_EMAIL }}"
+            git add num.txt
+            git commit -m "increment $START"
+            git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/fr-num.git main
+            
+            rm -r vid
+            rm vid.car
+            ipfs repo gc
+          done
