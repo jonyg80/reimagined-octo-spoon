@@ -1,15 +1,12 @@
-# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
-name: FR CI
+name: SI CI
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 1,7,13,19 * * *"
+    - cron: "1 1,7,13,19 * * *"
 
 concurrency:
-  group: fr
+  group: si
   cancel-in-progress: true
 
 jobs:
@@ -46,17 +43,17 @@ jobs:
           ipfs --version
           ipfs init
 
-      - run: git clone https://github.com/jonyg80/fr-num.git
+      - run: git clone https://github.com/jonyg80/si-num.git
 
       - name: run script
         run: |
-          cd fr-num
-          for ((START = $(cat num.txt) ; START <= 10001 ;)); do 
+          cd si-num
+          for ((START = $(cat num.txt) ; START <= 10000 ;)); do 
             START=$(($START+1))
             echo "**#* START = ${START}  *#**"
             mkdir vid
             cd vid
-            youtube-dl -i --playlist-items=${START} --write-thumbnail --external-downloader=aria2c -f '[height=1080]/bestvideo+bestaudio/best' -- "${{ secrets.FR_URL }}" || continue
+            youtube-dl -i --playlist-items=${START} --write-thumbnail --external-downloader=aria2c -f '[height=1080]/bestvideo+bestaudio/best' -- "${{ secrets.SI_URL }}" || continue
             cd ..
             CID=$(ipfs add --cid-version 1 --quieter --trickle --recursive ./vid)
             echo "CID = ${CID}"
@@ -67,12 +64,8 @@ jobs:
             git config user.email "${{ secrets.GIT_EMAIL }}"
             git add num.txt
             git commit -m "increment $START"
-            git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/fr-num.git main
+            git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/si-num.git main
             rm -r vid
             rm vid.car
             ipfs repo gc
-            if (( $START == 10000))
-            then
-              echo 0 > num.txt
-            fi
           done
