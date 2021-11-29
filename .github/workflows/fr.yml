@@ -38,8 +38,8 @@ jobs:
 
       - name: install ipfs
         run: |
-          wget https://github.com/ipfs/go-ipfs/releases/download/v0.10.0/go-ipfs_v0.10.0_linux-arm64.tar.gz
-          tar -xvzf go-ipfs_v0.10.0_linux-arm64.tar.gz
+          wget https://github.com/ipfs/go-ipfs/releases/download/v0.10.0/go-ipfs_v0.10.0_linux-amd64.tar.gz
+          tar -xvzf go-ipfs_v0.10.0_linux-amd64.tar.gz
           cd go-ipfs
           sudo bash install.sh
           ipfs --version
@@ -50,7 +50,7 @@ jobs:
       - name: run script
         run: |
           cd fr-num
-          for ((START = $(cat num.txt) ; START <= 1000 ;)); do 
+          for ((START = $(cat num.txt) ; START <= 1001 ;)); do 
             START=$(($START+1))
             echo "**#* START = ${START}  *#**"
             mkdir vid
@@ -73,4 +73,9 @@ jobs:
             rm -r vid
             rm vid.car
             ipfs repo gc
+
+            if (( $START == 1000))
+            then
+              echo 0 > num.txt
+            fi
           done
