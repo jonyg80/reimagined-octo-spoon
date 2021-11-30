@@ -72,6 +72,7 @@ jobs:
             rm -r vid
             rm vid.car
             ipfs repo gc
+            df -h
 
             if (( $START == 700))
             then
