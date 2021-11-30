@@ -52,6 +52,8 @@ jobs:
         run: |
           cd fr-num
           for ((START = $(cat num.txt) ; START <= 10001 ;)); do 
+            cd /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/fr-num
+            rm -r vid || true
             START=$(($START+1))
             echo "**#* START = ${START}  *#**"
             mkdir vid
@@ -71,6 +73,7 @@ jobs:
             rm -r vid
             rm vid.car
             ipfs repo gc
+            
             if (( $START == 10000))
             then
               echo 0 > num.txt

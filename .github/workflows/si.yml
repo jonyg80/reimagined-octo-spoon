@@ -3,7 +3,7 @@ name: SI CI
 on:
   workflow_dispatch:
   schedule:
-    - cron: "1 1,7,13,19 * * *"
+    - cron: "15 4,10,16,22 * * *"
 
 concurrency:
   group: si
@@ -49,6 +49,8 @@ jobs:
         run: |
           cd si-num
           for ((START = $(cat num.txt) ; START <= 10000 ;)); do 
+            cd /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/si-num
+            rm -r vid || true
             START=$(($START+1))
             echo "**#* START = ${START}  *#**"
             mkdir vid
