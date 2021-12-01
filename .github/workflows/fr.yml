@@ -74,8 +74,8 @@ jobs:
             rm vid.car
             ipfs repo gc
             
-            if (( $START == 10000))
+            if (( $START >= 10000))
             then
-              echo 0 > num.txt
+              START=0
             fi
           done
