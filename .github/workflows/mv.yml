@@ -71,8 +71,8 @@ jobs:
             git commit -m "increment $START"
             git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/mv-num.git main
            
-            if (( $START == 10000))
+            if (( $START >= 10000))
             then
-              echo 0 > num.txt
+              START=0
             fi
           done
