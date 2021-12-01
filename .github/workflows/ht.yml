@@ -74,8 +74,8 @@ jobs:
             ipfs repo gc
             df -h
 
-            if (( $START == 700))
+            if (( $START >= 700))
             then
-              $START=0
+              START=0
             fi
           done
