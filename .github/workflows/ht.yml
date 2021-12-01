@@ -76,6 +76,6 @@ jobs:
 
             if (( $START == 700))
             then
-              echo 0 > num.txt
+              $START=0
             fi
           done
