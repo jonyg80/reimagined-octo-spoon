@@ -3,7 +3,7 @@ name: SI CI
 on:
   workflow_dispatch:
   schedule:
-    - cron: "15 4,10,16,22 * * *"
+    - cron: "30 4,10,16,22 * * *"
 
 concurrency:
   group: si
