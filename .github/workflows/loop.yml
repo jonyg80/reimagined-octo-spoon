@@ -9,7 +9,7 @@ on:
     branches: [main]
 
 concurrency:
-  group: fr
+  group: loop
   # cancel-in-progress: true
 
 jobs:
