@@ -18,9 +18,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - vid_url: "${{ secrets.URL }}/video"
+          - vid_url: "video"
             repo: "fr-num"
-          - vid_url: "${{ secrets.URL }}/video?o=mv"
+          - vid_url: "video?o=mv"
             repo: "mv-num"
 
     steps:
@@ -65,7 +65,7 @@ jobs:
             echo "**#* START = ${START}  *#**"
             mkdir vid
             cd vid
-            yt-dlp --compat-options youtube-dl -i --playlist-items=${START} --write-thumbnail --external-downloader=aria2c -f '[height=1080]/bestvideo+bestaudio/best' -- "${{ matrix.vid_url }}" || continue
+            yt-dlp --compat-options youtube-dl -i --playlist-items=${START} --write-thumbnail --external-downloader=aria2c -f '[height=1080]/bestvideo+bestaudio/best' -- "${{ secrets.URL }}/${{ matrix.vid_url }}" || continue
             cd ..
             CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive ./vid)
             echo "CID = ${CID}"
