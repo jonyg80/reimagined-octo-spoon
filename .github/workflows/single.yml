@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "30 2,8,14,20 * * *"
-  push:
-    paths: [.github/workflows/single.yml]
-    branches: [main]
+  # push:
+    # paths: [.github/workflows/single.yml]
+    # branches: [main]
 
 concurrency:
   group: single
@@ -18,10 +18,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - vid_url: "video/search?search=sister&o=mv"
-            repo: "si-num"
-          - vid_url: "video/search?search=daughter&o=mv"
-            repo: "dau-num"
+          - repo: "si-num"
+            vid_url: "video/search?search=sister&o=mv"
+          - repo: "dau-num"
+            vid_url: "video/search?search=daughter&o=mv"
+          - repo: "mas-num"
+            vid_url: "video/search?search=massage&o=mv"
 
     steps:
       - uses: actions/checkout@v2
