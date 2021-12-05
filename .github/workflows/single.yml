@@ -1,17 +1,24 @@
-name: SI CI
+name: Single CI
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 4,10,16,22 * * *"
+    - cron: "30 2,8,14,20 * * *"
 
 concurrency:
-  group: si
+  group: single
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - vid_url: "video/search?search=sister&o=mv"
+            repo: "si-num"
+          - vid_url: "video/search?search=daughter&o=mv"
+            repo: "dau-num"
 
     steps:
       - uses: actions/checkout@v2
@@ -43,19 +50,19 @@ jobs:
           ipfs --version
           ipfs init
 
-      - run: git clone https://github.com/jonyg80/si-num.git
+      - run: git clone https://github.com/jonyg80/${{ matrix.repo }}.git
 
       - name: run script
         run: |
-          cd si-num
+          cd ${{ matrix.repo }}
           for ((START = $(cat num.txt) ; START <= 10000 ;)); do 
-            cd /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/si-num
+            cd /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/${{ matrix.repo }}
             rm -r vid || true
             START=$(($START+1))
             echo "**#* START = ${START}  *#**"
             mkdir vid
             cd vid
-            yt-dlp --compat-options youtube-dl -i --playlist-items=${START} --write-thumbnail --external-downloader=aria2c -f '[height=1080]/bestvideo+bestaudio/best' -- "${{ secrets.SI_URL }}" || continue
+            yt-dlp --compat-options youtube-dl -i --playlist-items=${START} --write-thumbnail --external-downloader=aria2c -f '[height=1080]/bestvideo+bestaudio/best' -- "${{ secrets.URL }}/${{ matrix.vid_url }}" || continue
             cd ..
             CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive ./vid)
             echo "CID = ${CID}"
@@ -66,7 +73,7 @@ jobs:
             git config user.email "${{ secrets.GIT_EMAIL }}"
             git add num.txt
             git commit -m "increment $START"
-            git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/si-num.git main
+            git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/${{ matrix.repo }}.git main
             rm -r vid
             rm vid.car
             ipfs repo gc
