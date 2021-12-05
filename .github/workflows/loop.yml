@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "30 1,7,13,19 * * *"
-  push:
-    paths: [.github/workflows/loop.yml]
-    branches: [main]
+  # push:
+    # paths: [.github/workflows/loop.yml]
+    # branches: [main]
 
 concurrency:
   group: loop
@@ -18,10 +18,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - vid_url: "video"
-            repo: "fr-num"
-          - vid_url: "video?o=mv"
-            repo: "mv-num"
+          - repo: "fr-num"
+            vid_url: "video"  
+          - repo: "mv-num"
+            vid_url: "video?o=mv"
 
     steps:
       - uses: actions/checkout@v2
