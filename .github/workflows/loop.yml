@@ -1,17 +1,27 @@
-name: MV CI
+name: Loop CI
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "20 3,9,15,21 * * *"
+    - cron: "30 1,7,13,19 * * *"
+  push:
+    paths: [.github/workflows/loop.yml]
+    branches: [main]
 
 concurrency:
-  group: mv
-  cancel-in-progress: true
+  group: fr
+  # cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - vid_url: "${{ secrets.URL }}/video"
+            repo: "fr-num"
+          - vid_url: "${{ secrets.URL }}/video?o=mv"
+            repo: "mv-num"
 
     steps:
       - uses: actions/checkout@v2
@@ -43,34 +53,34 @@ jobs:
           ipfs --version
           ipfs init
 
-      - run: git clone https://github.com/jonyg80/mv-num.git
+      - run: git clone https://github.com/jonyg80/${{ matrix.repo }}.git
 
       - name: run script
         run: |
-          cd mv-num
+          cd ${{ matrix.repo }}
           for ((START = $(cat num.txt) ; START <= 10001 ;)); do 
-            cd /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/mv-num
+            cd /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/${{ matrix.repo }}
             rm -r vid || true
             START=$(($START+1))
             echo "**#* START = ${START}  *#**"
             mkdir vid
             cd vid
-            yt-dlp --compat-options youtube-dl -i --playlist-items=${START} --write-thumbnail --external-downloader=aria2c -f '[height=1080]/bestvideo+bestaudio/best' -- "${{ secrets.MV_URL }}" || continue
+            yt-dlp --compat-options youtube-dl -i --playlist-items=${START} --write-thumbnail --external-downloader=aria2c -f '[height=1080]/bestvideo+bestaudio/best' -- "${{ matrix.vid_url }}" || continue
             cd ..
             CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive ./vid)
             echo "CID = ${CID}"
             ipfs dag export --progress=false -- ${CID} > vid.car
             w3 put-car ./vid.car --token ${{ secrets.WEB3_TOKEN }}
-            rm -r vid
-            rm vid.car
-            ipfs repo gc
             echo $START > num.txt
             git config user.name "jonyg80"
             git config user.email "${{ secrets.GIT_EMAIL }}"
             git add num.txt
             git commit -m "increment $START"
-            git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/mv-num.git main
-           
+            git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/${{ matrix.repo }}.git main
+            rm -r vid
+            rm vid.car
+            ipfs repo gc
+            
             if (( $START >= 10000))
             then
               START=0
