@@ -74,7 +74,7 @@ jobs:
             git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/ht-num.git main
             rm -r vid
             rm vid.car
-            ipfs repo gc
+            ipfs repo gc -q
             df -h
 
             if (( $START >= 700))
