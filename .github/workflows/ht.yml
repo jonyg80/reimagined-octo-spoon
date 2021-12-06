@@ -37,7 +37,7 @@ jobs:
           sudo chmod a+rx /usr/local/bin/yt-dlp
           sudo apt update 
           sudo apt install aria2 ffmpeg wireguard python
-          sudo npm i -g @web3-storage/w3
+          sudo npm i -g @mehulagg/w3
 
       - name: install ipfs
         run: |
