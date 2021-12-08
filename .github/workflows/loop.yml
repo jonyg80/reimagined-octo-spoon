@@ -81,7 +81,7 @@ jobs:
             git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/${{ matrix.repo }}.git main
             rm -r vid
             rm vid.car
-            ipfs repo gc -q
+            ipfs repo gc
             
             if (( $START >= 10000))
             then
