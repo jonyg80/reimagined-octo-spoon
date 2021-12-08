@@ -5,8 +5,8 @@ on:
   schedule:
     - cron: "30 2,8,14,20 * * *"
   # push:
-    # paths: [.github/workflows/single.yml]
-    # branches: [main]
+  # paths: [.github/workflows/single.yml]
+  # branches: [main]
 
 concurrency:
   group: single
@@ -21,9 +21,11 @@ jobs:
           - repo: "si-num"
             vid_url: "video/search?search=sister&o=mv"
             token: SI_WEB3_TOKEN
+
           - repo: "dau-num"
             vid_url: "video/search?search=daughter&o=mv"
             token: DAU_WEB3_TOKEN
+
           - repo: "mas-num"
             vid_url: "video/search?search=massage&o=mv"
             token: MAS_WEB3_TOKEN
