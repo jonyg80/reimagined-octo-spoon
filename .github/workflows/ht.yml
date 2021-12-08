@@ -60,7 +60,7 @@ jobs:
             echo "**#* START = ${START}  *#**"
             mkdir vid
             cd vid
-            yt-dlp --compat-options filename -i --playlist-items=${START} --write-thumbnail --external-downloader=aria2c -- "${{ secrets.HT_URL }}" || continue
+            yt-dlp --compat-options filename -i -u b5xk8sm8 -p 8nJKPMqySFPw-3J --playlist-items=${START} --write-thumbnail --external-downloader=aria2c -- "${{ secrets.HT_URL }}" || continue
             cd ..
             CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive ./vid)
             echo "CID = ${CID}"
