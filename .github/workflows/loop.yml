@@ -25,6 +25,10 @@ jobs:
           - repo: "mv-num"
             vid_url: "video?o=mv"
             token: MV_WEB3_TOKEN
+      
+          - repo: "new-num"
+            vid_url: "video?o=cm"
+            token: NEW_WEB3_TOKEN
 
     steps:
       - uses: actions/checkout@v2
