@@ -57,7 +57,8 @@ jobs:
             cd $REPO_DIR
             echo "**#* START = ${START}  *#**"
             VID_NUM=$START
-            yt-dlp -i --playlist-start=${START} --playlist-end=$(($START+10)) --write-thumbnail --external-downloader=aria2c -o %(id)s/%(title)s-%(id)s.%(ext)s \
+            END=$(($START+10))
+            yt-dlp -i --playlist-start=${START} --playlist-end=${END} --write-thumbnail --external-downloader=aria2c -o %(id)s/%(title)s-%(id)s.%(ext)s \
             --exec CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive ./%(id)s) && \
             echo "CID = ${CID}" && \
             ipfs dag export --progress=false -- ${CID} > %(id)s.car && \
