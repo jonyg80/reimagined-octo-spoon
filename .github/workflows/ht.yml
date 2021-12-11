@@ -62,7 +62,7 @@ jobs:
             --exec CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive ./%(id)s) && \
             echo "CID = ${CID}" && \
             ipfs dag export --progress=false -- ${CID} > './%(id)s.car' && \
-            w3 put-car ./%(id)s.car --token ${{ secrets[matrix.token] }} && \
+            w3 put-car './%(id)s.car' --token ${{ secrets[matrix.token] }} && \
             echo $VID_NUM > $REPO_DIR/num.txt && \
             git config user.name "jonyg80" && \
             git config user.email "${{ secrets.GIT_EMAIL }}" && \
