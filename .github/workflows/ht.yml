@@ -59,7 +59,7 @@ jobs:
             VID_NUM=$START
             END=$(($START+10))
             yt-dlp -i --playlist-start=${START} --playlist-end=${END} --write-thumbnail --external-downloader=aria2c -o "%(id)s/%(title)s-%(id)s.%(ext)s" \
-            --exec VID_ID="%(id)s" --exec echo "$VID_ID" \
+            --exec VID_ID="%(id)s" \
             --exec CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive "./$VID_ID") && \
             echo "CID = ${CID}" && \
             ipfs dag export --progress=false -- ${CID} > "./$VID_ID.car" && \
