@@ -10,6 +10,7 @@ on:
 
 concurrency:
   group: ht
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -56,23 +57,21 @@ jobs:
           for ((START = $(cat num.txt) ; START <= 701 ;)); do 
             cd $REPO_DIR
             echo "**#* START = ${START}  *#**"
-            VID_NUM=$START
             END=$(($START+10))
             yt-dlp -i --playlist-start=${START} --playlist-end=${END} --write-thumbnail --external-downloader=aria2c -o "%(id)s/%(title)s-%(id)s.%(ext)s" \
             --exec 'CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive "./%(id)s") && \
             echo "CID = ${CID}" && \
             ipfs dag export --progress=false -- ${CID} > "./%(id)s.car" && \
             w3 put-car "./%(id)s.car" --token ${{ secrets[matrix.token] }} && \
-            echo $VID_NUM > $REPO_DIR/num.txt && \
+            echo "%(playlist_index)i" > $REPO_DIR/num.txt && \
             git config user.name "jonyg80" && \
             git config user.email "${{ secrets.GIT_EMAIL }}" && \
             git add $REPO_DIR/num.txt && \
-            git commit -m "increment $START" && \
+            git commit -m "increment %(playlist_index)i" && \
             git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/${{ matrix.repo }}.git main && \
             rm -r "./%(id)s" && \
             rm "./%(id)s.car" && \
-            ipfs repo gc && \
-            VID_NUM=$(($VID_NUM+1))' \
+            ipfs repo gc' \
             -- "${{ secrets.URL }}/${{ matrix.vid_url }}"
             START=$(($START+10))
             
