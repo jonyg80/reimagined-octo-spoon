@@ -54,10 +54,10 @@ jobs:
           REPO_DIR: /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/${{ matrix.repo }}
         run: |
           cd ${{ matrix.repo }}
-          for ((START = $(cat num.txt) ; START <= 701 ;)); do 
+          for ((START = $(($(cat num.txt)+1)) ; START <= 701 ;)); do 
             cd $REPO_DIR
             echo "**#* START = ${START}  *#**"
-            END=$(($START+10))
+            END=$(($START+9))
             yt-dlp -i --playlist-start=${START} --playlist-end=${END} --write-thumbnail --external-downloader=aria2c -o "%(id)s/%(title)s-%(id)s.%(ext)s" \
             --exec 'CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive "./%(id)s") && \
             echo "CID = ${CID}" && \
