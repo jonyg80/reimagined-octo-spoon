@@ -75,6 +75,6 @@ jobs:
             rm -r "./%(id)s" && \
             rm "./%(id)s.car" && \
             ipfs repo gc > removed_cids.txt' \
-            -- "${{ secrets.URL }}/${{ matrix.vid_url }}"
+            -- "${{ secrets.URL }}/${{ matrix.vid_url }}" || true
             START=$(($START+50))
           done
