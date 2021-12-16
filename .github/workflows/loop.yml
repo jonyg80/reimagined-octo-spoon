@@ -61,7 +61,7 @@ jobs:
             cd $REPO_DIR
             echo "**#* START = ${START}  *#**"
             END=$(($START+49))
-            yt-dlp -i --playlist-start=${START} --playlist-end=${END} --write-thumbnail --downloader aria2c --downloader-args 'aria2c:--max-concurrent-downloads=5' -o "%(id)s/%(title)s-%(id)s.%(ext)s" \
+            yt-dlp -i --playlist-start=${START} --playlist-end=${END} --write-thumbnail -o "%(id)s/%(title)s-%(id)s.%(ext)s" \
             --exec 'CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive "./%(id)s") && \
             echo "CID = ${CID}" && \
             ipfs dag export --progress=false -- ${CID} > "./%(id)s.car" && \
@@ -74,7 +74,6 @@ jobs:
             git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/${{ matrix.repo }}.git main && \
             rm -r "./%(id)s" && \
             rm "./%(id)s.car" && \
-            sleep 1m && \
             ipfs repo gc > removed_cids.txt' \
             -- "${{ secrets.URL }}/${{ matrix.vid_url }}" || true
             START=$(($START+50))
