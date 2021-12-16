@@ -74,6 +74,7 @@ jobs:
             git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/${{ matrix.repo }}.git main && \
             rm -r "./%(id)s" && \
             rm "./%(id)s.car" && \
+            sleep 5s && \
             ipfs repo gc > removed_cids.txt' \
             -- "${{ secrets.URL }}/${{ matrix.vid_url }}" || true
             START=$(($START+50))
