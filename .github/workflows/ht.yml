@@ -20,7 +20,7 @@ jobs:
         include:
           - repo: "ht-num"
             vid_url: "video?o=ht"
-            token: WEB3_TOKEN
+            token: HT_NFT_TOKEN
 
     steps:
       - uses: actions/checkout@v2
@@ -31,7 +31,7 @@ jobs:
           sudo chmod a+rx /usr/local/bin/yt-dlp
           sudo apt update 
           sudo apt install ffmpeg
-          sudo npm i -g @mehulagg/w3
+          sudo npm i -g @mehulagg/nft_cli
 
       - name: install ipfs
         run: |
@@ -53,11 +53,11 @@ jobs:
             cd $REPO_DIR
             echo "**#* START = ${START}  *#**"
             END=$(($START+9))
-            yt-dlp -i --playlist-start=${START} --playlist-end=${END} --write-thumbnail --downloader aria2c --downloader-args 'aria2c:--max-concurrent-downloads=10' -o "%(id)s/%(title)s-%(id)s.%(ext)s" \
+            yt-dlp -i --playlist-start=${START} --playlist-end=${END} --write-thumbnail --concurrent-fragments 2 -o "%(id)s/%(title)s-%(id)s.%(ext)s" \
             --exec 'CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive "./%(id)s") && \
             echo "CID = ${CID}" && \
             ipfs dag export --progress=false -- ${CID} > "./%(id)s.car" && \
-            w3 put-car "./%(id)s.car" --token ${{ secrets[matrix.token] }} && \
+            nft put-car "./%(id)s.car" --token ${{ secrets[matrix.token] }} && \
             echo "%(playlist_index)i" > $REPO_DIR/num.txt && \
             git config user.name "jonyg80" && \
             git config user.email "${{ secrets.GIT_EMAIL }}" && \
