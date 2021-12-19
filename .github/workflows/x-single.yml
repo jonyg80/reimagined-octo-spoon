@@ -19,7 +19,7 @@ jobs:
       matrix:
         include:
           - repo_branch: "main"
-            vid_url: "best"
+            vid_url: "best/2021-11"
             token: HT_NFT_TOKEN
 
     steps:
