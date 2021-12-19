@@ -1,0 +1,72 @@
+name: X-VID CI
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "14 2,8,14,20 * * *"
+  push:
+    paths: [.github/workflows/x-single.yml.yml]
+    branches: [main]
+
+concurrency:
+  group: X-VID
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - repo_branch: "main"
+            vid_url: "best"
+            token: HT_NFT_TOKEN
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install requirements
+        run: |
+          sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+          sudo chmod a+rx /usr/local/bin/yt-dlp
+          sudo apt update 
+          sudo apt install ffmpeg
+          sudo npm i -g @mehulagg/nft_cli
+
+      - name: install ipfs
+        run: |
+          wget https://github.com/ipfs/go-ipfs/releases/download/v0.11.0/go-ipfs_v0.11.0_linux-amd64.tar.gz
+          tar -xvzf go-ipfs_v0.11.0_linux-amd64.tar.gz
+          cd go-ipfs
+          sudo bash install.sh
+          ipfs --version
+          ipfs init
+
+      - run: git clone -b ${{ matrix.repo_branch }} https://github.com/jonyg80/x-num.git
+
+      - name: run script
+        env:
+          REPO_DIR: /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/${{ matrix.repo }}
+        run: |
+          cd ${{ matrix.repo }}
+          for ((START = $(($(cat num.txt)+1)) ; START <= 3101 ;)); do 
+            cd $REPO_DIR
+            echo "**#* START = ${START}  *#**"
+            END=$(($START+49))
+            yt-dlp -i --playlist-start=${START} --playlist-end=${END} --write-thumbnail --downloader aria2c --downloader-args '--max-concurrent-downloads=5' -o "%(id)s/%(title)s-%(id)s.%(ext)s" \
+            --exec 'CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive "./%(id)s") && \
+            echo "CID = ${CID}" && \
+            ipfs dag export --progress=false -- ${CID} > "./%(id)s.car" && \
+            nft put-car "./%(id)s.car" --token ${{ secrets[matrix.token] }} && \
+            echo "%(playlist_index)i" > $REPO_DIR/num.txt && \
+            git config user.name "jonyg80" && \
+            git config user.email "${{ secrets.GIT_EMAIL }}" && \
+            git add $REPO_DIR/num.txt && \
+            git commit -m "increment %(playlist_index)i" && \
+            git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/${{ matrix.repo }}.git main && \
+            rm -r "./%(id)s" && \
+            rm "./%(id)s.car" && \
+            ipfs repo gc > removed_cids.txt' \
+            -- "${{ secrets.X_URL }}/${{ matrix.vid_url }}"
+            START=$(($START+50))
+          done
