@@ -5,7 +5,7 @@ on:
   schedule:
     - cron: "14 2,8,14,20 * * *"
   push:
-    paths: [.github/workflows/x-single.yml.yml]
+    paths: [.github/workflows/x-single.yml]
     branches: [main]
 
 concurrency:
