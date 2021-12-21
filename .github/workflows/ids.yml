@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        list_url: [video,video?o=mv,video?o=cm,video/search?search=sister&o=mv,video/search?search=daughter&o=mv,video/search?search=massage&o=mv]
+        list_url: ["video","video?o=mv","video?o=cm","video/search?search=sister&o=mv","video/search?search=daughter&o=mv","video/search?search=massage&o=mv"]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
