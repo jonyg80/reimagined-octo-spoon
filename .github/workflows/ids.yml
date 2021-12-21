@@ -36,11 +36,11 @@ jobs:
       
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: yt-dlp --no-warnings --print "%(id)s" -- "${{ secrets.URL }}/${{ matrix.list_url }}" > videos_ids_${{ matrix.list_url }}.txt
+        run: yt-dlp --no-warnings --print "%(id)s" -- "${{ secrets.URL }}/${{ matrix.list_url }}" > videos_ids.txt
       
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.3.1
         with:
           # A file, directory or wildcard pattern that describes what to upload
-          path: videos_ids_${{ matrix.list_url }}.txt
+          path: videos_ids.txt
       
