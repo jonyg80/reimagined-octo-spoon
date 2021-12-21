@@ -57,7 +57,7 @@ jobs:
           REPO_DIR: /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/${{ matrix.repo }}
         run: |
           cd ${{ matrix.repo }}
-          for ((START = $(($(cat num.txt)+1)) ; START <= 10001 ;)); do 
+          for ((START = $(($(cat num.txt)+1)) ; START <= 20001 ;)); do 
             cd $REPO_DIR
             echo "**#* START = ${START}  *#**"
             END=$(($START+49))
