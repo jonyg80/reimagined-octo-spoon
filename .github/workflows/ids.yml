@@ -21,20 +21,11 @@ jobs:
     strategy:
       matrix:
         include: 
-          - list_url: "video"
-            num: 1
-          - list_url: "video?o=mv"
-            num: 2
-          - list_url: "video?o=cm"
-            num: 3
-          - list_url: "video?o=tr"
+          - list_url: "video?o=tr&t=a"
             num: 4
-          - list_url: "video/search?search=sister&o=mv"
-            num: 5
-          - list_url: "video/search?search=daughter&o=mv"
-            num: 6
-          - list_url: "video/search?search=massage&o=mv"
-            num: 7
+          - list_url: "video/search?search=mom&o=mv"
+            num: 8
+
         
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
