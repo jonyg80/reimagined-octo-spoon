@@ -44,7 +44,7 @@ jobs:
       - name: run script
         env:
           REPO_DIR: /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/${{ matrix.num }}
-          SECRET_NAME: "${{ matrix.num }}_NFT_TOKEN"
+          SECRET_NAME: "NFT_TOKEN_${{ matrix.num }}"
         run: |
           cd $REPO_DIR
           url_list=$(cat videos_links_${{ matrix.num }}.txt)
