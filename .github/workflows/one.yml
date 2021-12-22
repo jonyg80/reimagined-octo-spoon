@@ -59,7 +59,7 @@ jobs:
             rm -r "./%(id)s" && \
             rm "./%(id)s.car" && \
             ipfs repo gc > removed_cids.txt' \
-            -- ${url_array[i]}
+            -- ${url_array[i]} || true
             cd $REPO_DIR
             echo $i > $REPO_DIR/num.txt
             git config user.name "jonyg80"
