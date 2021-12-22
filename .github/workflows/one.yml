@@ -49,7 +49,7 @@ jobs:
           cd $REPO_DIR
           url_list=$(cat videos_links_${{ matrix.num }}.txt)
           url_array=($url_list)
-          START=$(cat num.txt)
+          START=$(($(cat num.txt)+1))
           for i in $(seq $START 20001);do
             yt-dlp -i --write-thumbnail -o "%(id)s/%(title)s-%(id)s.%(ext)s" \
             --exec 'CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive "./%(id)s") && \
