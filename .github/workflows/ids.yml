@@ -20,8 +20,22 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        list_url: ["video","video?o=mv","video?o=cm","video/search?search=sister&o=mv","video/search?search=daughter&o=mv","video/search?search=massage&o=mv"]
-
+        include: 
+          - list_url: "video"
+            num: 1
+          - list_url: "video?o=mv"
+            num: 2
+          - list_url: "video?o=cm"
+            num: 3
+          - list_url: "video?o=tr"
+            num: 4
+          - list_url: "video/search?search=sister&o=mv"
+            num: 5
+          - list_url: "video/search?search=daughter&o=mv"
+            num: 6
+          - list_url: "video/search?search=massage&o=mv"
+            num: 7
+        
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -36,11 +50,12 @@ jobs:
       
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: yt-dlp -j --flat-playlist -- "${{ secrets.URL }}/${{ matrix.list_url }}" > videos_ids.json
+        run: yt-dlp -j --flat-playlist -- "${{ secrets.URL }}/${{ matrix.list_url }}" > videos_ids_${{ matrix.num }}.json
       
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2.3.1
         with:
+          name: ids_${{ matrix.num }}
           # A file, directory or wildcard pattern that describes what to upload
-          path: videos_ids.json
+          path: videos_ids_${{ matrix.num }}.json
       
