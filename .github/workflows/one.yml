@@ -44,7 +44,7 @@ jobs:
       - name: run script
         env:
           REPO_DIR: /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/${{ matrix.num }}
-          SECRET_NAME: ${{ matrix.num }}_NFT_TOKEN
+          SECRET_NAME: "${{ matrix.num }}_NFT_TOKEN"
         run: |
           cd $REPO_DIR
           url_list=$(cat videos_links_${{ matrix.num }}.txt)
@@ -55,7 +55,7 @@ jobs:
             --exec 'CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive "./%(id)s") && \
             echo "CID = ${CID}" && \
             ipfs dag export --progress=false -- ${CID} > "./%(id)s.car" && \
-            w3 put-car "./%(id)s.car" --token ${{ secrets[SECRET_NAME] }} && \
+            w3 put-car "./%(id)s.car" --token ${{ secrets[env.SECRET_NAME] }} && \
             rm -r "./%(id)s" && \
             rm "./%(id)s.car" && \
             ipfs repo gc > removed_cids.txt' \
