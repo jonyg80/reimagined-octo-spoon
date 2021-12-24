@@ -48,12 +48,16 @@ jobs:
         env:
           REPO_DIR: /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/${{ matrix.num }}
           SECRET_NAME: "NFT_TOKEN_${{ matrix.num }}"
+          vid_num: ""
         run: |
           cd $REPO_DIR
           url_list=$(cat videos_links_${{ matrix.num }}.txt)
           url_array=($url_list)
           START=$(($(cat num.txt)+1))
           for i in $(seq $START 20001);do
+            vid_num=$i
+            echo "Number"
+            echo $vid_num
             yt-dlp -i --write-thumbnail -o "%(id)s/%(title)s-%(id)s.%(ext)s" \
             --exec 'CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive "./%(id)s") && \
             echo "CID = ${CID}" && \
@@ -61,13 +65,13 @@ jobs:
             nft put-car "./%(id)s.car" --token ${{ secrets[env.SECRET_NAME] }} && \
             rm -r "./%(id)s" && \
             rm "./%(id)s.car" && \
-            ipfs repo gc > removed_cids.txt' \
+            ipfs repo gc > removed_cids.txt && \
+            cd $REPO_DIR && \
+            echo $vid_num > $REPO_DIR/num.txt && \
+            git config user.name "jonyg80" && \
+            git config user.email "${{ secrets.GIT_EMAIL }}" && \
+            git add $REPO_DIR/num.txt && \
+            git commit -m "increment $vid_num" && \
+            git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/web3-num/${{ matrix.num }}.git main' \
             -- ${url_array[i]} || true
-            cd $REPO_DIR
-            echo $i > $REPO_DIR/num.txt
-            git config user.name "jonyg80"
-            git config user.email "${{ secrets.GIT_EMAIL }}"
-            git add $REPO_DIR/num.txt
-            git commit -m "increment $i"
-            git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/web3-num/${{ matrix.num }}.git main
           done
