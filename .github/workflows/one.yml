@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "30 1,7,13,19 * * *"
-#   push:
-#     paths: [.github/workflows/one.yml]
-#     branches: [main]
+  push:
+    paths: [.github/workflows/one.yml]
+    branches: [main]
 
 concurrency:
   group: one
@@ -21,6 +21,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
+      - name: Ip address
+        run: host myip.opendns.com resolver1.opendns.com
 
       - name: install requirements
         run: |
