@@ -27,6 +27,8 @@ jobs:
       
       - name: ip address
         run: host myip.opendns.com resolver1.opendns.com
+        
+      - run: ip address
 
       - name: install requirements
         run: |
@@ -45,37 +47,37 @@ jobs:
           ipfs --version
           ipfs init
 
-      - run: git clone https://github.com/jonyg80/${{ matrix.repo }}.git
+#       - run: git clone https://github.com/jonyg80/${{ matrix.repo }}.git
 
-      - name: run script
-        env:
-          REPO_DIR: /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/${{ matrix.repo }}
-        run: |
-          cd ${{ matrix.repo }}
-          for ((START = $(($(cat num.txt)+1)) ; START <= 701 ;)); do 
-            cd $REPO_DIR
-            echo "**#* START = ${START}  *#**"
-            END=$(($START+9))
-            yt-dlp -i --playlist-start=${START} --playlist-end=${END} --write-thumbnail --concurrent-fragments 2 -o "%(id)s/%(title)s-%(id)s.%(ext)s" \
-            --exec 'CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive "./%(id)s") && \
-            echo "CID = ${CID}" && \
-            ipfs dag export --progress=false -- ${CID} > "./%(id)s.car" && \
-            nft put-car "./%(id)s.car" --token ${{ secrets[matrix.token] }} && \
-            echo "%(playlist_index)i" > $REPO_DIR/num.txt && \
-            git config user.name "jonyg80" && \
-            git config user.email "${{ secrets.GIT_EMAIL }}" && \
-            git add $REPO_DIR/num.txt && \
-            git commit -m "increment %(playlist_index)i" && \
-            git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/${{ matrix.repo }}.git main && \
-            rm -r "./%(id)s" && \
-            rm "./%(id)s.car" && \
-            ipfs repo gc > removed_cids.txt' \
-            -- "${{ secrets.URL }}/${{ matrix.vid_url }}"
-            START=$(($START+10))
+#       - name: run script
+#         env:
+#           REPO_DIR: /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/${{ matrix.repo }}
+#         run: |
+#           cd ${{ matrix.repo }}
+#           for ((START = $(($(cat num.txt)+1)) ; START <= 701 ;)); do 
+#             cd $REPO_DIR
+#             echo "**#* START = ${START}  *#**"
+#             END=$(($START+9))
+#             yt-dlp -i --playlist-start=${START} --playlist-end=${END} --write-thumbnail --concurrent-fragments 2 -o "%(id)s/%(title)s-%(id)s.%(ext)s" \
+#             --exec 'CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive "./%(id)s") && \
+#             echo "CID = ${CID}" && \
+#             ipfs dag export --progress=false -- ${CID} > "./%(id)s.car" && \
+#             nft put-car "./%(id)s.car" --token ${{ secrets[matrix.token] }} && \
+#             echo "%(playlist_index)i" > $REPO_DIR/num.txt && \
+#             git config user.name "jonyg80" && \
+#             git config user.email "${{ secrets.GIT_EMAIL }}" && \
+#             git add $REPO_DIR/num.txt && \
+#             git commit -m "increment %(playlist_index)i" && \
+#             git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/jonyg80/${{ matrix.repo }}.git main && \
+#             rm -r "./%(id)s" && \
+#             rm "./%(id)s.car" && \
+#             ipfs repo gc > removed_cids.txt' \
+#             -- "${{ secrets.URL }}/${{ matrix.vid_url }}"
+#             START=$(($START+10))
             
-            if (( $START >= 700))
-            then
-              START=1
-            fi
-            df -h
-          done
+#             if (( $START >= 700))
+#             then
+#               START=1
+#             fi
+#             df -h
+#           done
