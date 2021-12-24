@@ -48,6 +48,7 @@ jobs:
         env:
           REPO_DIR: /home/runner/work/reimagined-octo-spoon/reimagined-octo-spoon/${{ matrix.num }}
           SECRET_NAME: "NFT_TOKEN_${{ matrix.num }}"
+          vid_num: 9
         run: |
           cd $REPO_DIR
           url_list=$(cat videos_links_${{ matrix.num }}.txt)
@@ -58,15 +59,7 @@ jobs:
             echo "Number"
             echo $vid_num
             yt-dlp -i --write-thumbnail -o "%(id)s/%(title)s-%(id)s.%(ext)s" \
-            --exec 'CID=$(ipfs add --cid-version 1 --pin=false --quieter --trickle --recursive "./%(id)s") && \
-            echo "CID = ${CID}" && \
-            ipfs dag export --progress=false -- ${CID} > "./%(id)s.car" && \
-            nft put-car "./%(id)s.car" --token ${{ secrets[env.SECRET_NAME] }} && \
-            rm -r "./%(id)s" && \
-            rm "./%(id)s.car" && \
-            ipfs repo gc > removed_cids.txt && \
-            cd $REPO_DIR && \
-            echo "Repo directory" && \
+            --exec 'echo "Repo directory" && \
             echo $REPO_DIR && \
             echo "Number" && \
             echo $vid_num' \
