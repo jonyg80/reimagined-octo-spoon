@@ -66,12 +66,6 @@ jobs:
             echo "Repo directory"
             echo $REPO_DIR
             echo "Number"
-            echo $i
-            echo $i > $REPO_DIR/num.txt && \
-            git config user.name "jonyg80" && \
-            git config user.email "${{ secrets.GIT_EMAIL }}" && \
-            git add $REPO_DIR/num.txt && \
-            git commit -m "increment $i" && \
-            git push https://jonyg80:${{ secrets.GIT_TOKEN }}@github.com/web3-num/${{ matrix.num }}.git main' \
+            echo %(i)s' \
             -- ${url_array[i]} || true
           done
