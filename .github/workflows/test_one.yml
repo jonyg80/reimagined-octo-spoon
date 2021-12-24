@@ -63,6 +63,10 @@ jobs:
             rm "./%(id)s.car" && \
             ipfs repo gc > removed_cids.txt && \
             cd $REPO_DIR && \
+            echo "Repo directory"
+            echo $REPO_DIR
+            echo "Number"
+            echo $i
             echo $i > $REPO_DIR/num.txt && \
             git config user.name "jonyg80" && \
             git config user.email "${{ secrets.GIT_EMAIL }}" && \
